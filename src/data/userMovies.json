@@ -1,0 +1,192 @@
+{
+  "userMovies": {
+    "Ornella": [
+      {
+        "id": "ninotchka-1939",
+        "title": "Ninotchka",
+        "year": 1939,
+        "image": "/posters/ninotchka-1939.jpg",
+        "director": "Ernst Lubitsch",
+        "actors": ["Greta Garbo", "Melvyn Douglas", "Ina Claire"],
+        "synopsis": "A stern Russian woman sent to Paris to supervise the sale of jewels finds herself attracted to a man who represents everything she is supposed to detest."
+      },
+      {
+        "id": "a-pigeon-sat-on-a-branch-reflecting-on-existence-2014",
+        "title": "A Pigeon Sat on a Branch Reflecting on Existence",
+        "year": 2014,
+        "image": "/posters/a-pigeon-sat-on-a-branch-reflecting-on-existence-2014.jpg",
+        "director": "Roy Andersson",
+        "actors": ["Holger Andersson", "Nils Westblom", "Charlotta Larsson"],
+        "synopsis": "A series of absurdist vignettes exploring the human condition through surreal and darkly humorous scenarios."
+      },
+      {
+        "id": "barbara-2012",
+        "title": "Barbara",
+        "year": 2012,
+        "image": "/posters/barbara-2012.jpg",
+        "director": "Christian Petzold",
+        "actors": ["Nina Hoss", "Ronald Zehrfeld", "Jasna Fritzi Bauer"],
+        "synopsis": "A doctor in 1980s East Germany is banished to a small country hospital after applying for an exit visa."
+      },
+      {
+        "id": "to-be-or-not-to-be-1942",
+        "title": "To Be or Not to Be",
+        "year": 1942,
+        "image": "/posters/to-be-or-not-to-be-1942.jpg",
+        "director": "Ernst Lubitsch",
+        "actors": ["Carole Lombard", "Jack Benny", "Robert Stack"],
+        "synopsis": "A Polish actor and his wife help a Polish pilot escape from the Nazis during World War II."
+      },
+      {
+        "id": "the-lives-of-others-2006",
+        "title": "The Lives of Others",
+        "year": 2006,
+        "image": "/posters/the-lives-of-others-2006.jpg",
+        "director": "Florian Henckel von Donnersmarck",
+        "actors": ["Ulrich Mühe", "Martina Gedeck", "Sebastian Koch"],
+        "synopsis": "In 1984 East Berlin, an agent of the secret police, conducting surveillance on a writer and his lover, finds himself becoming increasingly absorbed by their lives."
+      }
+    ],
+    "Mariel": [
+      {
+        "id": "milk-2008",
+        "title": "Milk",
+        "year": 2008,
+        "image": "/posters/milk-2008.jpg",
+        "director": "Gus Van Sant",
+        "actors": ["Sean Penn", "Emile Hirsch", "Josh Brolin"],
+        "synopsis": "The story of Harvey Milk, California's first openly gay elected official."
+      },
+      {
+        "id": "nazareno-cruz-y-el-lobo-1975",
+        "title": "Nazareno Cruz y el Lobo",
+        "year": 1975,
+        "image": "/posters/nazareno-cruz-y-el-lobo-1975.jpg",
+        "director": "Leonardo Favio",
+        "actors": ["Juan José Camero", "Marina Magalí", "Alfredo Alcón"],
+        "synopsis": "A young man cursed to become a werewolf every full moon falls in love with a beautiful woman."
+      },
+      {
+        "id": "inherit-the-wind-1960",
+        "title": "Inherit the Wind",
+        "year": 1960,
+        "image": "/posters/inherit-the-wind-1960.jpg",
+        "director": "Stanley Kramer",
+        "actors": ["Spencer Tracy", "Fredric March", "Gene Kelly"],
+        "synopsis": "Based on the famous Scopes Monkey Trial, a teacher is arrested for teaching evolution in a small Tennessee town."
+      },
+      {
+        "id": "the-wind-that-shakes-the-barley-2006",
+        "title": "The Wind That Shakes the Barley",
+        "year": 2006,
+        "image": "/posters/the-wind-that-shakes-the-barley-2006.jpg",
+        "director": "Ken Loach",
+        "actors": ["Cillian Murphy", "Pádraic Delaney", "Liam Cunningham"],
+        "synopsis": "Two brothers fight for Irish independence in the 1920s, but find themselves on opposite sides of the civil war."
+      },
+      {
+        "id": "esperando-la-carroza-1985",
+        "title": "Esperando la Carroza",
+        "year": 1985,
+        "image": "/posters/esperando-la-carroza-1985.jpg",
+        "director": "Alejandro Doria",
+        "actors": ["Antonio Gasalla", "Mónica Villa", "Betiana Blum"],
+        "synopsis": "A dysfunctional family tries to deal with their elderly mother who they believe is dead."
+      }
+    ],
+    "Florencia": [
+      {
+        "id": "paddington-2014",
+        "title": "Paddington",
+        "year": 2014,
+        "image": "/posters/paddington-2014.jpg",
+        "director": "Paul King",
+        "actors": ["Ben Whishaw", "Hugh Bonneville", "Sally Hawkins"],
+        "synopsis": "A young Peruvian bear travels to London in search of a home, finding himself taken in by the Brown family."
+      },
+      {
+        "id": "phantom-thread-2017",
+        "title": "Phantom Thread",
+        "year": 2017,
+        "image": "/posters/phantom-thread-2017.jpg",
+        "director": "Paul Thomas Anderson",
+        "actors": ["Daniel Day-Lewis", "Vicky Krieps", "Lesley Manville"],
+        "synopsis": "A renowned dressmaker in 1950s London finds his carefully controlled life disrupted by a young, strong-willed woman."
+      },
+      {
+        "id": "legally-blonde-2001",
+        "title": "Legally Blonde",
+        "year": 2001,
+        "image": "/posters/legally-blonde-2001.jpg",
+        "director": "Robert Luketic",
+        "actors": ["Reese Witherspoon", "Luke Wilson", "Selma Blair"],
+        "synopsis": "Elle Woods, a fashionable sorority queen, is dumped by her boyfriend and decides to follow him to law school."
+      },
+      {
+        "id": "flow-2024",
+        "title": "Flow",
+        "year": 2024,
+        "image": "/posters/flow-2024.jpg",
+        "director": "Gints Zilbalodis",
+        "actors": ["Animation", "No dialogue"],
+        "synopsis": "A cat separated from its family embarks on a journey through a surreal, post-apocalyptic world."
+      },
+      {
+        "id": "the-devil-wears-prada-2006",
+        "title": "The Devil Wears Prada",
+        "year": 2006,
+        "image": "/posters/the-devil-wears-prada-2006.jpg",
+        "director": "David Frankel",
+        "actors": ["Anne Hathaway", "Meryl Streep", "Emily Blunt"],
+        "synopsis": "A young woman lands a job as an assistant to a powerful fashion magazine editor."
+      }
+    ],
+    "Paola": [
+      {
+        "id": "fantastic-planet-1973",
+        "title": "Fantastic Planet",
+        "year": 1973,
+        "image": "/posters/fantastic-planet-1973.jpg",
+        "director": "René Laloux",
+        "actors": ["Animation", "French voice cast"],
+        "synopsis": "On a distant planet, giant blue aliens keep humans as pets, but one human's knowledge threatens their society."
+      },
+      {
+        "id": "its-such-a-beautiful-day-2012",
+        "title": "It's Such a Beautiful Day",
+        "year": 2012,
+        "image": "/posters/its-such-a-beautiful-day-2012.jpg",
+        "director": "Don Hertzfeldt",
+        "actors": ["Animation", "Don Hertzfeldt"],
+        "synopsis": "A stick figure named Bill struggles with mental illness and the meaning of life in this animated trilogy."
+      },
+      {
+        "id": "nostalgia-for-the-light-2010",
+        "title": "Nostalgia for the Light",
+        "year": 2010,
+        "image": "/posters/nostalgia-for-the-light-2010.jpg",
+        "director": "Patricio Guzmán",
+        "actors": ["Documentary", "Various interviewees"],
+        "synopsis": "In Chile's Atacama Desert, astronomers search for distant galaxies while women search for the remains of their loved ones."
+      },
+      {
+        "id": "another-round-2020",
+        "title": "Another Round",
+        "year": 2020,
+        "image": "/posters/another-round-2020.jpg",
+        "director": "Thomas Vinterberg",
+        "actors": ["Mads Mikkelsen", "Thomas Bo Larsen", "Magnus Millang"],
+        "synopsis": "Four high school teachers consume alcohol on a daily basis to see how it affects their social and professional lives."
+      },
+      {
+        "id": "after-life-1998",
+        "title": "After Life",
+        "year": 1998,
+        "image": "/posters/after-life-1998.jpg",
+        "director": "Hirokazu Kore-eda",
+        "actors": ["Arata", "Erika Oda", "Susumu Terajima"],
+        "synopsis": "In a waystation between heaven and earth, the recently deceased must choose one memory to keep for eternity."
+      }
+    ]
+  }
+}

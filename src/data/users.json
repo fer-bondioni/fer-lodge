@@ -1,0 +1,44 @@
+{
+  "users": [
+    {
+      "name": "Ornella",
+      "movies": [
+        "ninotchka-1939",
+        "a-pigeon-sat-on-a-branch-reflecting-on-existence-2014",
+        "barbara-2012",
+        "to-be-or-not-to-be-1942",
+        "the-lives-of-others-2006"
+      ]
+    },
+    {
+      "name": "Mariel",
+      "movies": [
+        "milk-2008",
+        "nazareno-cruz-y-el-lobo-1975",
+        "inherit-the-wind-1960",
+        "the-wind-that-shakes-the-barley-2006",
+        "esperando-la-carroza-1985"
+      ]
+    },
+    {
+      "name": "Florencia",
+      "movies": [
+        "paddington-2014",
+        "phantom-thread-2017",
+        "legally-blonde-2001",
+        "flow-2024",
+        "the-devil-wears-prada-2006"
+      ]
+    },
+    {
+      "name": "Paola",
+      "movies": [
+        "fantastic-planet-1973",
+        "its-such-a-beautiful-day-2012",
+        "nostalgia-for-the-light-2010",
+        "another-round-2020",
+        "after-life-1998"
+      ]
+    }
+  ]
+}
