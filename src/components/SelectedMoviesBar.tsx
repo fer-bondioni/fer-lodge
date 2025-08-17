@@ -2,12 +2,14 @@
 
 import { Movie } from '@/types';
 import { useMoviePosters } from '@/hooks/useMoviePosters';
+import { getFallbackPoster } from '@/utils/tmdbService';
 
 interface SelectedMoviesBarProps {
   selectedMovies: string[];
   allMovies: Movie[];
   onMovieRemove: (movieId: string) => void;
   onContinueToGame: () => void;
+  correctMovies?: string[];
 }
 
 export default function SelectedMoviesBar({
@@ -15,16 +17,17 @@ export default function SelectedMoviesBar({
   allMovies,
   onMovieRemove,
   onContinueToGame,
+  correctMovies = [],
 }: SelectedMoviesBarProps) {
   if (selectedMovies.length === 0) return null;
 
-  // Get the selected movie objects
-  const selectedMovieObjects = allMovies.filter(movie => 
-    selectedMovies.includes(movie.id)
-  );
+  // Get the selected movie objects in the same order as selectedMovies
+  const selectedMovieObjects = selectedMovies.map(id => 
+    allMovies.find(movie => movie.id === id)
+  ).filter((movie): movie is Movie => movie !== undefined);
 
-  // Use the custom hook to get posters for selected movies
-  const { moviesWithPosters } = useMoviePosters(selectedMovieObjects);
+  // Use the custom hook to get posters for selected movies with error handling
+  const { moviesWithPosters = [], isLoading, error } = useMoviePosters(selectedMovieObjects);
 
   return (
     <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm border-t border-white/20">
@@ -39,37 +42,41 @@ export default function SelectedMoviesBar({
               
               {/* Movies Grid */}
               <div className="flex space-x-3">
-                {moviesWithPosters.map((movie) => (
+                {selectedMovies.map((movieId, index) => {
+                  const movie = allMovies.find((m: Movie) => m.id === movieId);
+                  const movieWithPoster = moviesWithPosters.find((m: Movie & { posterUrl: string }) => m.id === movieId);
+                  if (!movieWithPoster || !movie) return null;
+                  return (
                   <div
-                    key={movie.id}
-                    className="group relative bg-white/20 rounded-lg p-2 transition-all duration-300 hover:bg-white/30 hover:scale-105"
+                    key={movieId}
+                    className={`group relative rounded-lg p-2 transition-all duration-300 hover:scale-105
+                      ${correctMovies?.includes(movieId) 
+                        ? 'bg-green-500/30 hover:bg-green-500/40 border border-green-500' 
+                        : 'bg-white/20 hover:bg-white/30'}`}
                   >
                     <div className="flex items-center space-x-2">
                       <img
-                        src={movie.posterUrl}
+                        src={movieWithPoster?.posterUrl || getFallbackPoster(movie.year)}
                         alt={movie.title}
                         className="w-8 h-8 rounded object-cover"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          // Use fallback poster if TMDB poster fails
-                          if (target.src !== getFallbackPoster(movie.year)) {
-                            target.src = getFallbackPoster(movie.year);
-                          }
+                          target.src = getFallbackPoster(movie.year);
                         }}
                       />
                       <div className="text-white text-sm">
                         <p className="font-medium truncate max-w-24">{movie.title}</p>
                         <p className="text-xs text-gray-300">{movie.year}</p>
-                        {movie.tmdbData && (
+                        {movieWithPoster?.tmdbData && (
                           <p className="text-xs text-yellow-400">
-                            ⭐ {movie.tmdbData.vote_average.toFixed(1)}
+                            ⭐ {movieWithPoster.tmdbData.vote_average.toFixed(1)}
                           </p>
                         )}
                       </div>
                       
                       {/* Remove Button */}
                       <button
-                        onClick={() => onMovieRemove(movie.id)}
+                        onClick={() => onMovieRemove(movieId)}
                         className="text-white/70 hover:text-white transition-colors ml-1 opacity-0 group-hover:opacity-100"
                         aria-label={`Remover ${movie.title}`}
                       >
@@ -79,7 +86,8 @@ export default function SelectedMoviesBar({
                       </button>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -125,9 +133,4 @@ export default function SelectedMoviesBar({
   );
 }
 
-// Helper function for fallback posters
-function getFallbackPoster(year: number): string {
-  if (year < 1960) return 'https://via.placeholder.com/500x750/2a2a2a/ffffff?text=Classic+Film';
-  if (year < 2000) return 'https://via.placeholder.com/500x750/1a1a1a/ffffff?text=Modern+Film';
-  return 'https://via.placeholder.com/500x750/3a3a3a/ffffff?text=International+Film';
-}
+

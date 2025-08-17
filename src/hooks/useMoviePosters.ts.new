@@ -1,0 +1,143 @@
+'use client';
+
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Movie } from "@/types";
+import { TMDBService, TMDBMovie, getFallbackPoster } from "@/utils/tmdbService";
+
+interface MovieWithPoster extends Movie {
+  posterUrl: string;
+  backdropUrl?: string;
+  tmdbData?: TMDBMovie;
+  isLoading: boolean;
+  error?: string;
+}
+
+export const useMoviePosters = (movies: Movie[]) => {
+  const [moviesWithPosters, setMoviesWithPosters] = useState<MovieWithPoster[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const isMounted = useRef(true);
+  const abortController = useRef<AbortController | null>(null);
+
+  // Initialize movies with fallback posters
+  const initializeMovies = useCallback((movies: Movie[]): MovieWithPoster[] => {
+    return movies.map((movie) => ({
+      ...movie,
+      posterUrl: getFallbackPoster(movie.year),
+      isLoading: false,
+      error: undefined,
+    }));
+  }, []);
+
+  // Fetch a single movie poster
+  const fetchMoviePoster = useCallback(async (movie: Movie): Promise<MovieWithPoster | null> => {
+    if (!isMounted.current) return null;
+    
+    try {
+      const tmdbMovie = await TMDBService.searchMovie(movie.title, movie.year);
+      
+      if (!isMounted.current) return null;
+
+      if (tmdbMovie && tmdbMovie.poster_path) {
+        const posterUrl = TMDBService.getPosterUrl(tmdbMovie.poster_path, "w500");
+        const backdropUrl = tmdbMovie.backdrop_path
+          ? TMDBService.getBackdropUrl(tmdbMovie.backdrop_path, "w1280")
+          : undefined;
+
+        return {
+          ...movie,
+          posterUrl,
+          backdropUrl,
+          tmdbData: tmdbMovie,
+          isLoading: false,
+          error: undefined,
+        };
+      }
+    } catch (err) {
+      console.error(`Error fetching poster for ${movie.title}:`, err);
+    }
+    
+    return {
+      ...movie,
+      posterUrl: getFallbackPoster(movie.year),
+      isLoading: false,
+      error: "Failed to load poster",
+    };
+  }, []);
+
+  useEffect(() => {
+    isMounted.current = true;
+
+    if (!movies.length) {
+      setMoviesWithPosters([]);
+      setIsLoading(false);
+      setError(null);
+      return;
+    }
+
+    const fetchPosters = async () => {
+      try {
+        // Initialize with fallback posters
+        setMoviesWithPosters(initializeMovies(movies));
+        setIsLoading(true);
+        setError(null);
+
+        // Create new abort controller for this effect
+        abortController.current?.abort();
+        abortController.current = new AbortController();
+
+        const updatedMovies = await Promise.all(
+          movies.map(async (movie) => {
+            if (!isMounted.current) return null;
+            return await fetchMoviePoster(movie);
+          })
+        );
+
+        if (!isMounted.current) return;
+
+        setMoviesWithPosters(
+          updatedMovies.filter((movie): movie is MovieWithPoster => movie !== null)
+        );
+      } catch (err) {
+        if (!isMounted.current) return;
+        console.error("Error fetching movie posters:", err);
+        setError("Failed to load movie posters");
+      } finally {
+        if (isMounted.current) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchPosters();
+
+    return () => {
+      isMounted.current = false;
+      abortController.current?.abort();
+    };
+  }, [movies, initializeMovies, fetchMoviePoster]);
+
+  const refreshPoster = useCallback(async (movieId: string) => {
+    const movie = movies.find((m) => m.id === movieId);
+    if (!movie || !isMounted.current) return;
+
+    setMoviesWithPosters((prev) =>
+      prev.map((m) => (m.id === movieId ? { ...m, isLoading: true } : m))
+    );
+
+    const updatedMovie = await fetchMoviePoster(movie);
+    
+    if (!isMounted.current || !updatedMovie) return;
+
+    setMoviesWithPosters((prev) =>
+      prev.map((m) => (m.id === movieId ? updatedMovie : m))
+    );
+  }, [movies, fetchMoviePoster]);
+
+  return {
+    moviesWithPosters,
+    isLoading,
+    error,
+    refreshPoster,
+  };
+};

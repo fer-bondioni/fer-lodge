@@ -4,8 +4,11 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Movie } from '@/types';
 import moviesData from '@/data/movies.json';
+import usersData from '@/data/users.json';
 import MovieCarousel from '@/components/MovieCarousel';
 import SelectedMoviesBar from '@/components/SelectedMoviesBar';
+import GameModal from '@/components/Modals/GameModal';
+import Celebration from '@/components/Celebration';
 
 export default function GalleryPage() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -13,6 +16,12 @@ export default function GalleryPage() {
   const [selectedMovies, setSelectedMovies] = useState<string[]>([]);
   const [isVisible, setIsVisible] = useState(false);
   const [userName, setUserName] = useState<string>('');
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [showCancelButton, setShowCancelButton] = useState(false);
+  const [attempts, setAttempts] = useState(0);
+  const [correctMovies, setCorrectMovies] = useState<string[]>([]);
+  const [showCelebration, setShowCelebration] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -79,9 +88,46 @@ export default function GalleryPage() {
     });
   };
 
+  const validateMovieSelections = () => {
+    const userMovies = usersData.users.find(user => user.name === userName)?.movies || [];
+    const correctOnes = selectedMovies.filter(movieId => userMovies.includes(movieId));
+    setCorrectMovies(correctOnes);
+    
+    if (correctOnes.length === 5) {
+      setModalMessage("¡Llamemos a Scorsese, loquita querida!");
+      setShowCancelButton(false);
+      setShowCelebration(true);
+    } else {
+      if (attempts === 0) {
+        setModalMessage("Dale Marlene Dietrich, ponele onda, que nos espera Hollywood");
+      } else if (attempts === 1) {
+        setModalMessage("Dale Marlene Dietrich, ponele onda, que nos espera Hollywood");
+      } else {
+        setModalMessage("Estamos cerrando, flaca");
+      }
+      setAttempts(prev => prev + 1);
+      // Remover películas incorrectas
+      setSelectedMovies(correctOnes);
+    }
+  };
+
+  const handleConfirmSelection = () => {
+    if (selectedMovies.length === 5) {
+      setShowModal(false);
+      validateMovieSelections();
+    }
+  };
+
+  const handleCancelSelection = () => {
+    setShowModal(false);
+  };
+
   const handleContinueToGame = () => {
-    localStorage.setItem('selectedMovies', JSON.stringify(selectedMovies));
-    router.push('/game');
+    if (selectedMovies.length === 5) {
+      setModalMessage("¿Estás segura?");
+      setShowCancelButton(true);
+      setShowModal(true);
+    }
   };
 
   return (
@@ -98,7 +144,7 @@ export default function GalleryPage() {
             ← Volver
           </button>
           <div className="text-white text-center">
-            <h1 className="text-2xl font-bold">Galería de Películas</h1>
+    
             {userName && (
               <p className="text-lg text-red-400 font-semibold">
                 Bienvenida, {userName} 🎬
@@ -129,9 +175,20 @@ export default function GalleryPage() {
         allMovies={movies}
         onMovieRemove={toggleMovieSelection}
         onContinueToGame={handleContinueToGame}
+        correctMovies={correctMovies}
       />
 
+      {/* Game Modal */}
+      <GameModal
+        isOpen={showModal}
+        message={modalMessage}
+        onConfirm={handleConfirmSelection}
+        onCancel={handleCancelSelection}
+        showCancelButton={showCancelButton}
+      />
 
+      {/* Celebration Effect */}
+      {showCelebration && <Celebration />}
     </div>
   );
 }

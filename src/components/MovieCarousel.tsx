@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Movie } from '@/types';
 import { useMoviePosters } from '@/hooks/useMoviePosters';
+import { getFallbackPoster } from '@/utils/tmdbService';
 
 interface MovieCarouselProps {
   movies: Movie[];
@@ -10,13 +11,6 @@ interface MovieCarouselProps {
   onIndexChange: (index: number) => void;
   selectedMovies: string[];
   onMovieToggle: (movieId: string) => void;
-}
-
-// Helper function for fallback posters
-function getFallbackPoster(year: number): string {
-  if (year < 1960) return 'https://via.placeholder.com/500x750/2a2a2a/ffffff?text=Classic+Film';
-  if (year < 2000) return 'https://via.placeholder.com/500x750/1a1a1a/ffffff?text=Modern+Film';
-  return 'https://via.placeholder.com/500x750/3a3a3a/ffffff?text=International+Film';
 }
 
 export default function MovieCarousel({
@@ -29,7 +23,7 @@ export default function MovieCarousel({
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [direction, setDirection] = useState<'left' | 'right'>('right');
   
-  const { moviesWithPosters, isLoading, error, refreshPoster } = useMoviePosters(movies);
+  const { moviesWithPosters = [], isLoading, error, refreshPoster } = useMoviePosters(movies);
 
   const nextMovie = () => {
     if (isTransitioning) return;
@@ -168,8 +162,9 @@ export default function MovieCarousel({
                   className="relative w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 rounded-lg shadow-2xl"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    if (target.src !== getFallbackPoster(currentMovie.year)) {
-                      target.src = getFallbackPoster(currentMovie.year);
+                    const fallbackUrl = getFallbackPoster(currentMovie.year);
+                    if (target.src !== fallbackUrl) {
+                      target.src = fallbackUrl;
                     }
                   }}
                 />

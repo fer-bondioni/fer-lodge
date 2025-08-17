@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Movie } from "@/types";
 import { TMDBService, TMDBMovie, getFallbackPoster } from "@/utils/tmdbService";
 
@@ -10,33 +10,88 @@ interface MovieWithPoster extends Movie {
   error?: string;
 }
 
-export const useMoviePosters = (movies: Movie[]) => {
+export const useMoviePosters = (
+  movies: Movie[]
+): {
+  moviesWithPosters: MovieWithPoster[];
+  isLoading: boolean;
+  error: string | null;
+  refreshPoster: (movieId: string) => Promise<void>;
+} => {
   const [moviesWithPosters, setMoviesWithPosters] = useState<MovieWithPoster[]>(
     []
   );
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isMounted = useRef(true);
+  const abortController = useRef<AbortController | null>(null);
+
+  // Initialize movies with fallback posters
+  const initializeMovies = useCallback((movies: Movie[]) => {
+    return movies.map((movie) => ({
+      ...movie,
+      posterUrl: getFallbackPoster(movie.year),
+      isLoading: false,
+      error: undefined,
+    }));
+  }, []);
+
+  // Fetch a single movie poster
+  const fetchMoviePoster = useCallback(async (movie: Movie) => {
+    if (!isMounted.current) return null;
+
+    try {
+      const tmdbMovie = await TMDBService.searchMovie(movie.title, movie.year);
+
+      if (!isMounted.current) return null;
+
+      if (tmdbMovie && tmdbMovie.poster_path) {
+        const posterUrl = TMDBService.getPosterUrl(
+          tmdbMovie.poster_path,
+          "w500"
+        );
+        const backdropUrl = tmdbMovie.backdrop_path
+          ? TMDBService.getBackdropUrl(tmdbMovie.backdrop_path, "w1280")
+          : undefined;
+
+        return {
+          ...movie,
+          posterUrl,
+          backdropUrl,
+          tmdbData: tmdbMovie,
+          isLoading: false,
+        };
+      }
+    } catch (err) {
+      console.error(`Error fetching poster for ${movie.title}:`, err);
+    }
+
+    return {
+      ...movie,
+      posterUrl: getFallbackPoster(movie.year),
+      isLoading: false,
+      error: "Failed to load poster",
+    };
+  }, []);
 
   useEffect(() => {
-    const fetchPosters = async () => {
-      if (!movies.length) return;
+    if (!movies.length) {
+      setMoviesWithPosters([]);
+      setIsLoading(false);
+      setError(null);
+      return;
+    }
 
+    const fetchPosters = async () => {
+      // Initialize with fallback posters
+      setMoviesWithPosters(initializeMovies(movies));
       setIsLoading(true);
       setError(null);
 
       try {
-        // Initialize movies with fallback posters
-        const initialMovies: MovieWithPoster[] = movies.map((movie) => ({
-          ...movie,
-          posterUrl: getFallbackPoster(movie.year),
-          isLoading: true,
-        }));
-
-        setMoviesWithPosters(initialMovies);
-
         // Fetch posters for each movie
         const updatedMovies = await Promise.all(
-          movies.map(async (movie, index) => {
+          movies.map(async (movie) => {
             try {
               // Search for movie in TMDB
               const tmdbMovie = await TMDBService.searchMovie(
@@ -59,6 +114,7 @@ export const useMoviePosters = (movies: Movie[]) => {
                   backdropUrl,
                   tmdbData: tmdbMovie,
                   isLoading: false,
+                  error: undefined,
                 };
               } else {
                 // Use fallback poster if no TMDB match found
@@ -66,6 +122,7 @@ export const useMoviePosters = (movies: Movie[]) => {
                   ...movie,
                   posterUrl: getFallbackPoster(movie.year),
                   isLoading: false,
+                  error: undefined,
                 };
               }
             } catch (err) {
@@ -80,17 +137,29 @@ export const useMoviePosters = (movies: Movie[]) => {
           })
         );
 
-        setMoviesWithPosters(updatedMovies);
+        if (isMounted.current) {
+          setMoviesWithPosters(updatedMovies);
+          setError(null);
+        }
       } catch (err) {
         console.error("Error fetching movie posters:", err);
-        setError("Failed to load movie posters");
+        if (isMounted.current) {
+          setError("Failed to load movie posters");
+        }
       } finally {
-        setIsLoading(false);
+        if (isMounted.current) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchPosters();
-  }, [movies]);
+
+    return () => {
+      isMounted.current = false;
+      abortController.current?.abort();
+    };
+  }, [movies, initializeMovies]);
 
   const refreshPoster = async (movieId: string) => {
     const movie = movies.find((m) => m.id === movieId);

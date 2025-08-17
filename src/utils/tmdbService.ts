@@ -1,7 +1,7 @@
 // TMDB API Service
 // Get your API key from: https://www.themoviedb.org/settings/api
 
-const TMDB_ACCESS_TOKEN = process.env.NEXT_PUBLIC_TMDB_ACCESS_TOKEN;
+const TMDB_API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
 
@@ -35,10 +35,12 @@ export class TMDBService {
 
     try {
       console.log("Requesting URL:", url);
-      const response = await fetch(url, {
+      const urlWithKey = `${url}${
+        url.includes("?") ? "&" : "?"
+      }api_key=${TMDB_API_KEY}`;
+      const response = await fetch(urlWithKey, {
         headers: {
-          Authorization: `Bearer ${TMDB_ACCESS_TOKEN}`,
-          accept: "application/json",
+          "Content-Type": "application/json",
         },
       });
 
@@ -58,11 +60,20 @@ export class TMDBService {
     }
   }
 
+  private static cache: { [key: string]: TMDBMovie | null } = {};
+
   // Search for a movie by title and year
   static async searchMovie(
     title: string,
     year?: number
   ): Promise<TMDBMovie | null> {
+    const cacheKey = `${title}-${year || ""}`;
+
+    // Check cache first
+    if (this.cache[cacheKey] !== undefined) {
+      return this.cache[cacheKey];
+    }
+
     try {
       const endpoint = `/search/movie`;
       const queryParams = `&query=${encodeURIComponent(title)}${
@@ -89,10 +100,13 @@ export class TMDBService {
         }
       }
 
-      // Return the first result (usually the most relevant)
-      return result.results[0];
+      const movieResult = result.results[0];
+      // Store in cache
+      this.cache[cacheKey] = movieResult || null;
+      return movieResult;
     } catch (error) {
       console.error("Error searching movie:", error);
+      this.cache[cacheKey] = null;
       return null;
     }
   }
