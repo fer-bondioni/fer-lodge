@@ -1,8 +1,7 @@
 // TMDB API Service
 // Get your API key from: https://www.themoviedb.org/settings/api
 
-const TMDB_API_KEY =
-  process.env.NEXT_PUBLIC_TMDB_API_KEY || "your_api_key_here";
+const TMDB_ACCESS_TOKEN = process.env.NEXT_PUBLIC_TMDB_ACCESS_TOKEN;
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
 
@@ -26,13 +25,31 @@ export interface TMDBMovieSearchResult {
 }
 
 export class TMDBService {
-  private static async makeRequest<T>(endpoint: string): Promise<T> {
-    const url = `${TMDB_BASE_URL}${endpoint}?api_key=${TMDB_API_KEY}&language=es-ES`;
+  private static async makeRequest<T>(
+    endpoint: string,
+    queryParams: string = ""
+  ): Promise<T> {
+    const url = `${TMDB_BASE_URL}${endpoint}${
+      endpoint.includes("?") ? "&" : "?"
+    }language=es-ES${queryParams}`;
 
     try {
-      const response = await fetch(url);
+      console.log("Requesting URL:", url);
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${TMDB_ACCESS_TOKEN}`,
+          accept: "application/json",
+        },
+      });
+
       if (!response.ok) {
-        throw new Error(`TMDB API error: ${response.status}`);
+        const errorText = await response.text();
+        console.error("TMDB API Response:", {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorText,
+        });
+        throw new Error(`TMDB API error: ${response.status} - ${errorText}`);
       }
       return await response.json();
     } catch (error) {
@@ -47,10 +64,15 @@ export class TMDBService {
     year?: number
   ): Promise<TMDBMovie | null> {
     try {
-      const searchQuery = year ? `${title} ${year}` : title;
-      const endpoint = `/search/movie?query=${encodeURIComponent(searchQuery)}`;
+      const endpoint = `/search/movie`;
+      const queryParams = `&query=${encodeURIComponent(title)}${
+        year ? `&year=${year}` : ""
+      }`;
 
-      const result: TMDBMovieSearchResult = await this.makeRequest(endpoint);
+      const result: TMDBMovieSearchResult = await this.makeRequest(
+        endpoint,
+        queryParams
+      );
 
       if (result.results.length === 0) {
         return null;

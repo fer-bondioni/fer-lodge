@@ -105,7 +105,7 @@ export default function GalleryPage() {
               </p>
             )}
             <p className="text-sm text-gray-300">
-              Selecciona hasta 5 películas ({selectedMovies.length}/5)
+              Selecciona 5 películas ({selectedMovies.length}/5)
             </p>
           </div>
           <div className="w-20"></div> {/* Spacer for centering */}
@@ -131,11 +131,7 @@ export default function GalleryPage() {
         onContinueToGame={handleContinueToGame}
       />
 
-      {/* Keyboard Navigation Info */}
-      <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-white/60 text-sm text-center">
-        <p>Usa las flechas del teclado para navegar</p>
-        <p>Presiona Espacio o Enter para seleccionar/deseleccionar</p>
-      </div>
+
     </div>
   );
 }
