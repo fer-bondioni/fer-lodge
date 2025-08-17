@@ -9,6 +9,26 @@ export interface Movie {
   isUserMovie: boolean;
 }
 
+export interface MovieWithPoster extends Movie {
+  posterUrl: string;
+  backdropUrl?: string;
+  tmdbData?: TMDBMovieData;
+  isLoading: boolean;
+  error?: string;
+}
+
+export interface TMDBMovieData {
+  id: number;
+  title: string;
+  original_title: string;
+  release_date: string;
+  poster_path: string;
+  backdrop_path: string;
+  overview: string;
+  vote_average: number;
+  genre_ids: number[];
+}
+
 export interface User {
   name: string;
   movies: string[];

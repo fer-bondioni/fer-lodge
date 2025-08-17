@@ -2,14 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import TwinPeaksBackground from '../components/TwinPeaksBackground';
 import NameInput from '../components/NameInput';
 
 export default function Home() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [currentUser, setCurrentUser] = useState<string | null>(null);
-  const [showGallery, setShowGallery] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true);
@@ -17,34 +18,17 @@ export default function Home() {
 
   const handleValidName = (name: string) => {
     setCurrentUser(name);
+    // Store user name in localStorage for the gallery page
+    localStorage.setItem('userName', name);
     setIsTransitioning(true);
   };
 
   const handleTransitionComplete = () => {
-    // After the fade to black, show the gallery
+    // After the fade to black, redirect directly to the gallery
     setTimeout(() => {
-      setShowGallery(true);
+      router.push('/gallery');
     }, 1000);
   };
-
-  if (showGallery) {
-    return (
-      <div className="min-h-screen bg-black text-white p-8">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold text-center mb-8 text-red-400">
-            Bienvenida, {currentUser} 🎬
-          </h1>
-          <p className="text-center text-gray-400 mb-8">
-            Selecciona tus 5 películas favoritas
-          </p>
-          {/* Movie Gallery will go here */}
-          <div className="text-center text-gray-600">
-            🎭 Movie Gallery Component Coming Soon...
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   // Don't render animations until client-side to prevent hydration mismatch
   if (!isMounted) {
