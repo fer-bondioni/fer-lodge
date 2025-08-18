@@ -196,7 +196,7 @@ export default function GalleryPage() {
         onCancel={handleCancelSelection}
         showCancelButton={showCancelButton}
         isVictory={showVictoryModal}
-        confirmText={showVictoryModal ? "¡Genial!" : "Continuar"}
+        confirmText={showVictoryModal ? "¡Cortá, que estoy jugando!" : "Continuar"}
       />
 
       {/* Celebration Effect */}
