@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { Movie } from "@/types";
 import { TMDBService, TMDBMovie, getFallbackPoster } from "@/utils/tmdbService";
 
@@ -74,8 +74,11 @@ export const useMoviePosters = (
     };
   }, []);
 
+  // Use memo to prevent unnecessary re-renders
+  const moviesMemo = useMemo(() => movies, [JSON.stringify(movies)]);
+
   useEffect(() => {
-    if (!movies.length) {
+    if (!moviesMemo.length) {
       setMoviesWithPosters([]);
       setIsLoading(false);
       setError(null);
@@ -83,8 +86,10 @@ export const useMoviePosters = (
     }
 
     const fetchPosters = async () => {
-      // Initialize with fallback posters
-      setMoviesWithPosters(initializeMovies(movies));
+      // Initialize with fallback posters only if they haven't been initialized
+      if (moviesWithPosters.length === 0) {
+        setMoviesWithPosters(initializeMovies(moviesMemo));
+      }
       setIsLoading(true);
       setError(null);
 

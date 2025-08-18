@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { Movie } from '@/types';
 import { useMoviePosters } from '@/hooks/useMoviePosters';
 import { getFallbackPoster } from '@/utils/tmdbService';
@@ -23,7 +23,11 @@ export default function MovieCarousel({
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [direction, setDirection] = useState<'left' | 'right'>('right');
   
-  const { moviesWithPosters = [], isLoading, error, refreshPoster } = useMoviePosters(movies);
+  // Use memoized movies array to prevent unnecessary re-renders
+  const moviesArrayRef = useRef(movies);
+  const { moviesWithPosters = [], isLoading, error, refreshPoster } = useMoviePosters(
+    useMemo(() => movies, [JSON.stringify(movies)])
+  );
 
   const nextMovie = () => {
     if (isTransitioning) return;
