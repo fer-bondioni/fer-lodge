@@ -10,6 +10,8 @@ interface SelectedMoviesBarProps {
   onMovieRemove: (movieId: string) => void;
   onContinueToGame: () => void;
   correctMovies?: string[];
+  gameWon?: boolean;
+  onTurnOffLights?: () => void;
 }
 
 export default function SelectedMoviesBar({
@@ -18,6 +20,8 @@ export default function SelectedMoviesBar({
   onMovieRemove,
   onContinueToGame,
   correctMovies = [],
+  gameWon = false,
+  onTurnOffLights,
 }: SelectedMoviesBarProps) {
   if (selectedMovies.length === 0) return null;
 
@@ -70,18 +74,30 @@ export default function SelectedMoviesBar({
             </div>
           </div>
 
-          {/* Continue Button */}
+          {/* Continue Button or Turn Off Lights Button */}
           {selectedMovies.length === 5 && (
-            <div className="flex items-center ml-8 border-l border-yellow-500/30 pl-8">              
-              <button
-                onClick={onContinueToGame}
-                className="bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-black px-8 py-2.5 rounded-lg transition-all duration-300 font-bold text-lg shadow-[0_0_15px_rgba(234,179,8,0.3)] hover:shadow-[0_0_20px_rgba(234,179,8,0.5)] transform hover:scale-105"
-              >
-                Consulta
-                <svg className="w-5 h-5 inline ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </button>
+            <div className="flex items-center ml-8 border-l border-yellow-500/30 pl-8">
+              {gameWon ? (
+                <button
+                  onClick={onTurnOffLights}
+                  className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white px-8 py-2.5 rounded-lg transition-all duration-300 font-bold text-lg shadow-[0_0_15px_rgba(220,38,38,0.3)] hover:shadow-[0_0_20px_rgba(220,38,38,0.5)] transform hover:scale-105"
+                >
+                  Apagar las luces
+                  <svg className="w-5 h-5 inline ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                  </svg>
+                </button>
+              ) : (
+                <button
+                  onClick={onContinueToGame}
+                  className="bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-black px-8 py-2.5 rounded-lg transition-all duration-300 font-bold text-lg shadow-[0_0_15px_rgba(234,179,8,0.3)] hover:shadow-[0_0_20px_rgba(234,179,8,0.5)] transform hover:scale-105"
+                >
+                  Consulta
+                  <svg className="w-5 h-5 inline ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </button>
+              )}
             </div>
           )}
 

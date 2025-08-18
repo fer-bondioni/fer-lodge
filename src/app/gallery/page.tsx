@@ -88,24 +88,27 @@ export default function GalleryPage() {
     });
   };
 
+  const [gameWon, setGameWon] = useState(false);
+  const [showVictoryModal, setShowVictoryModal] = useState(false);
+
   const validateMovieSelections = () => {
     const userMovies = usersData.users.find(user => user.name === userName)?.movies || [];
     const correctOnes = selectedMovies.filter(movieId => userMovies.includes(movieId));
     setCorrectMovies(correctOnes);
     
     if (correctOnes.length === 5) {
-      setModalMessage("¡Llamemos a Scorsese, loquita querida!");
+      setGameWon(true);
+      setShowVictoryModal(true);
+      setModalMessage("ATENDÉ EL TELÉFONO, ES SCORSESE!!");
       setShowCancelButton(false);
       setShowCelebration(true);
+      
+      // Hide victory modal after celebration
+      setTimeout(() => {
+        setShowVictoryModal(false);
+        setShowModal(false);
+      }, 5000);
     } else {
-      if (attempts === 0) {
-        setModalMessage("Dale Marlene Dietrich, ponele onda, que nos espera Hollywood");
-      } else if (attempts === 1) {
-        setModalMessage("Dale Marlene Dietrich, ponele onda, que nos espera Hollywood");
-      } else {
-        setModalMessage("Estamos cerrando, flaca");
-      }
-      setAttempts(prev => prev + 1);
       // Remover películas incorrectas
       setSelectedMovies(correctOnes);
     }
@@ -113,6 +116,7 @@ export default function GalleryPage() {
 
   const handleConfirmSelection = () => {
     if (selectedMovies.length === 5) {
+      setAttempts(prev => prev + 1);
       setShowModal(false);
       validateMovieSelections();
     }
@@ -124,7 +128,11 @@ export default function GalleryPage() {
 
   const handleContinueToGame = () => {
     if (selectedMovies.length === 5) {
-      setModalMessage("¿Estás segura?");
+      if (attempts === 0) {
+        setModalMessage("Dale Marlene Dietrich, ponele onda, que nos espera Hollywood");
+      } else {
+        setModalMessage("Estamos cerrando, flaca");
+      }
       setShowCancelButton(true);
       setShowModal(true);
     }
@@ -176,15 +184,19 @@ export default function GalleryPage() {
         onMovieRemove={toggleMovieSelection}
         onContinueToGame={handleContinueToGame}
         correctMovies={correctMovies}
+        gameWon={gameWon}
+        onTurnOffLights={() => router.push('/')}
       />
 
       {/* Game Modal */}
       <GameModal
-        isOpen={showModal}
+        isOpen={showModal || showVictoryModal}
         message={modalMessage}
-        onConfirm={handleConfirmSelection}
+        onConfirm={showVictoryModal ? () => setShowVictoryModal(false) : handleConfirmSelection}
         onCancel={handleCancelSelection}
         showCancelButton={showCancelButton}
+        isVictory={showVictoryModal}
+        confirmText={showVictoryModal ? "¡Genial!" : "Continuar"}
       />
 
       {/* Celebration Effect */}

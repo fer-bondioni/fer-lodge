@@ -35,17 +35,14 @@ export const validateMovieSelection = (
 export const getGameMessage = (tryCount: number): string => {
   switch (tryCount) {
     case 1:
-    case 2:
       return "Dale Marlene Dietrich, ponele onda, que nos espera Hollywood";
-    case 3:
-      return "Estamos cerrando, flaca";
     default:
-      return "¿estás segura?";
+      return "Estamos cerrando, flaca";
   }
 };
 
 export const getVictoryMessage = (): string => {
-  return "Llamemos a Scorsese, loquita querida";
+  return "ATENDÉ EL TELÉFONO, ES SCORSESE!!";
 };
 
 export const shuffleArray = <T>(array: T[]): T[] => {
