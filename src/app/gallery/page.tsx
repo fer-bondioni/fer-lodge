@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Movie } from '@/types';
 import moviesData from '@/data/movies.json';
@@ -10,7 +10,7 @@ import SelectedMoviesBar from '@/components/SelectedMoviesBar';
 import GameModal from '@/components/Modals/GameModal';
 import Celebration from '@/components/Celebration';
 
-export default function GalleryPage() {
+function GalleryContent() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedMovies, setSelectedMovies] = useState<string[]>([]);
@@ -202,5 +202,13 @@ export default function GalleryPage() {
       {/* Celebration Effect */}
       {showCelebration && <Celebration />}
     </div>
+  );
+}
+
+export default function GalleryPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black text-white flex items-center justify-center">Cargando…</div>}>
+      <GalleryContent />
+    </Suspense>
   );
 }

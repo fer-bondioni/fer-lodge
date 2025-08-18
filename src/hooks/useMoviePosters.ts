@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Movie } from "@/types";
 import { TMDBService, TMDBMovie, getFallbackPoster } from "@/utils/tmdbService";
 
@@ -24,7 +24,7 @@ export const useMoviePosters = (
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const isMounted = useRef(true);
-  const abortController = useRef<AbortController | null>(null);
+  // No external abort controller needed; we guard with isMounted
 
   // Initialize movies with fallback posters
   const initializeMovies = useCallback((movies: Movie[]) => {
@@ -36,49 +36,12 @@ export const useMoviePosters = (
     }));
   }, []);
 
-  // Fetch a single movie poster
-  const fetchMoviePoster = useCallback(async (movie: Movie) => {
-    if (!isMounted.current) return null;
+  // Note: Per-movie fetch helper was removed as it was unused.
 
-    try {
-      const tmdbMovie = await TMDBService.searchMovie(movie.title, movie.year);
-
-      if (!isMounted.current) return null;
-
-      if (tmdbMovie && tmdbMovie.poster_path) {
-        const posterUrl = TMDBService.getPosterUrl(
-          tmdbMovie.poster_path,
-          "w500"
-        );
-        const backdropUrl = tmdbMovie.backdrop_path
-          ? TMDBService.getBackdropUrl(tmdbMovie.backdrop_path, "w1280")
-          : undefined;
-
-        return {
-          ...movie,
-          posterUrl,
-          backdropUrl,
-          tmdbData: tmdbMovie,
-          isLoading: false,
-        };
-      }
-    } catch (err) {
-      console.error(`Error fetching poster for ${movie.title}:`, err);
-    }
-
-    return {
-      ...movie,
-      posterUrl: getFallbackPoster(movie.year),
-      isLoading: false,
-      error: "Failed to load poster",
-    };
-  }, []);
-
-  // Use memo to prevent unnecessary re-renders
-  const moviesMemo = useMemo(() => movies, [JSON.stringify(movies)]);
+  // Use movies directly; parent should provide stable references if needed
 
   useEffect(() => {
-    if (!moviesMemo.length) {
+    if (!movies.length) {
       setMoviesWithPosters([]);
       setIsLoading(false);
       setError(null);
@@ -86,10 +49,8 @@ export const useMoviePosters = (
     }
 
     const fetchPosters = async () => {
-      // Initialize with fallback posters only if they haven't been initialized
-      if (moviesWithPosters.length === 0) {
-        setMoviesWithPosters(initializeMovies(moviesMemo));
-      }
+      // Initialize with fallback posters to avoid layout shift
+      setMoviesWithPosters(initializeMovies(movies));
       setIsLoading(true);
       setError(null);
 
@@ -162,7 +123,6 @@ export const useMoviePosters = (
 
     return () => {
       isMounted.current = false;
-      abortController.current?.abort();
     };
   }, [movies, initializeMovies]);
 

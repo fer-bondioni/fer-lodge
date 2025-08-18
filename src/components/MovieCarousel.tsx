@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useRef, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { Movie } from '@/types';
 import { useMoviePosters } from '@/hooks/useMoviePosters';
 import { getFallbackPoster } from '@/utils/tmdbService';
+import Image from 'next/image';
 
 interface MovieCarouselProps {
   movies: Movie[];
@@ -23,11 +24,14 @@ export default function MovieCarousel({
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [direction, setDirection] = useState<'left' | 'right'>('right');
   
-  // Use memoized movies array to prevent unnecessary re-renders
-  const moviesArrayRef = useRef(movies);
-  const { moviesWithPosters = [], isLoading, error, refreshPoster } = useMoviePosters(
-    useMemo(() => movies, [JSON.stringify(movies)])
-  );
+  const { moviesWithPosters = [], isLoading, error, refreshPoster } = useMoviePosters(movies);
+
+  // Manage poster src to allow fallback on error with next/image
+  const [imgSrc, setImgSrc] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    const current = moviesWithPosters[currentIndex];
+    setImgSrc(current?.posterUrl);
+  }, [moviesWithPosters, currentIndex]);
 
   const nextMovie = () => {
     if (isTransitioning) return;
@@ -160,15 +164,16 @@ export default function MovieCarousel({
                 </div>
 
                 {/* Movie Poster */}
-                <img
-                  src={currentMovie.posterUrl}
+                <Image
+                  src={imgSrc || getFallbackPoster(currentMovie.year)}
                   alt={currentMovie.title}
+                  fill
+                  sizes="(max-width: 768px) 300px, 300px"
                   className="relative w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 rounded-lg shadow-2xl"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
+                  onError={() => {
                     const fallbackUrl = getFallbackPoster(currentMovie.year);
-                    if (target.src !== fallbackUrl) {
-                      target.src = fallbackUrl;
+                    if (imgSrc !== fallbackUrl) {
+                      setImgSrc(fallbackUrl);
                     }
                   }}
                 />

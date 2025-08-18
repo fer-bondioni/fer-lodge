@@ -1,8 +1,6 @@
 'use client';
 
 import { Movie } from '@/types';
-import { useMoviePosters } from '@/hooks/useMoviePosters';
-import { getFallbackPoster } from '@/utils/tmdbService';
 
 interface SelectedMoviesBarProps {
   selectedMovies: string[];
@@ -25,10 +23,7 @@ export default function SelectedMoviesBar({
 }: SelectedMoviesBarProps) {
   if (selectedMovies.length === 0) return null;
 
-  // Get the selected movie objects in the same order as selectedMovies
-  const selectedMovieObjects = selectedMovies.map(id => 
-    allMovies.find(movie => movie.id === id)
-  ).filter((movie): movie is Movie => movie !== undefined);
+  // Render bar only when there are selected movies
 
   return (
     <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-black/90 backdrop-blur-md rounded-xl border border-yellow-500/30 shadow-2xl" style={{ zIndex: 50 }}>
@@ -40,7 +35,7 @@ export default function SelectedMoviesBar({
               
               {/* Movies Grid */}
               <div className="flex gap-2 items-center" style={{ maxWidth: 'calc(100vw - 400px)' }}>
-                {selectedMovies.map((movieId, index) => {
+                {selectedMovies.map((movieId) => {
                   const movie = allMovies.find((m: Movie) => m.id === movieId);
                   if (!movie) return null;
                   return (

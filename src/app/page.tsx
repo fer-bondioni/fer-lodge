@@ -8,7 +8,6 @@ import NameInput from '../components/NameInput';
 
 export default function Home() {
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
 
@@ -17,7 +16,6 @@ export default function Home() {
   }, []);
 
   const handleValidName = (name: string) => {
-    setCurrentUser(name);
     // Store user name in localStorage for the gallery page
     localStorage.setItem('userName', name);
     setIsTransitioning(true);

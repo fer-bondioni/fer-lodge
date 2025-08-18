@@ -150,7 +150,7 @@ export class TMDBService {
   // Search multiple movies and return results with posters
   static async searchMultipleMovies(
     movies: Array<{ title: string; year: number }>
-  ): Promise<Array<{ original: any; tmdb: TMDBMovie | null }>> {
+  ): Promise<Array<{ original: { title: string; year: number }; tmdb: TMDBMovie | null }>> {
     const results = await Promise.all(
       movies.map(async (movie) => {
         const tmdbMovie = await this.searchMovie(movie.title, movie.year);
@@ -167,13 +167,11 @@ export class TMDBService {
 
 // Fallback poster URLs for common movie types
 export const FALLBACK_POSTERS = {
-  classic:
-    "https://via.placeholder.com/500x750/2a2a2a/ffffff?text=Classic+Film",
-  modern: "https://via.placeholder.com/500x750/1a1a1a/ffffff?text=Modern+Film",
-  international:
-    "https://via.placeholder.com/500x750/3a3a3a/ffffff?text=International+Film",
-  default:
-    "https://via.placeholder.com/500x750/000000/ffffff?text=Movie+Poster",
+  // Use local assets to prevent external network/DNS failures
+  classic: "/images/placeholder-movie.jpg",
+  modern: "/images/placeholder-movie.jpg",
+  international: "/images/placeholder-movie.jpg",
+  default: "/images/placeholder-movie.jpg",
 };
 
 // Get fallback poster based on movie year
