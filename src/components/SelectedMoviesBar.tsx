@@ -27,38 +27,35 @@ export default function SelectedMoviesBar({
   ).filter((movie): movie is Movie => movie !== undefined);
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm border-t border-white/20">
-      <div className="max-w-6xl mx-auto p-4">
-        <div className="flex items-center justify-between">
+    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-black/90 backdrop-blur-md rounded-xl border border-yellow-500/30 shadow-2xl" style={{ zIndex: 50 }}>
+      <div className="px-8 py-3">
+        <div className="flex items-center justify-between gap-8">
           {/* Selected Movies Display */}
-          <div className="flex-1">
-            <div className="flex items-center space-x-4">
-              <span className="text-white font-semibold text-lg">
-                Películas seleccionadas ({selectedMovies.length}/5):
-              </span>
+          <div className="flex-shrink">
+            <div className="flex items-center gap-4">
               
               {/* Movies Grid */}
-              <div className="flex space-x-3">
+              <div className="flex gap-2 items-center" style={{ maxWidth: 'calc(100vw - 400px)' }}>
                 {selectedMovies.map((movieId, index) => {
                   const movie = allMovies.find((m: Movie) => m.id === movieId);
                   if (!movie) return null;
                   return (
                   <div
                     key={movieId}
-                    className={`group relative rounded-lg p-2 transition-all duration-300 hover:scale-105
+                    className={`group relative px-4 py-2 transition-all duration-300 w-[160px] shrink-0
                       ${correctMovies?.includes(movieId) 
-                        ? 'bg-green-500/30 hover:bg-green-500/40 border border-green-500' 
-                        : 'bg-white/20 hover:bg-white/30'}`}
+                        ? 'bg-black border-2 border-yellow-400 shadow-[0_0_10px_rgba(234,179,8,0.5)]' 
+                        : 'bg-black/60 border border-white/20 hover:border-white/40'}`}
                   >
-                    <div className="flex items-center space-x-2">
-                      <div className="text-white text-sm">
-                        <p className="font-medium">{movie.title}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="text-white flex-1 mr-2 overflow-hidden">
+                        <p className="font-medium text-sm truncate" title={movie.title}>{movie.title}</p>
                       </div>
                       
                       {/* Remove Button */}
                       <button
                         onClick={() => onMovieRemove(movieId)}
-                        className="text-white/70 hover:text-white transition-colors ml-1 opacity-0 group-hover:opacity-100"
+                        className="text-white/70 hover:text-white transition-colors ml-1 opacity-0 group-hover:opacity-100 shrink-0"
                         aria-label={`Remover ${movie.title}`}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,10 +72,10 @@ export default function SelectedMoviesBar({
 
           {/* Continue Button */}
           {selectedMovies.length === 5 && (
-            <div className="flex items-center space-x-4">              
+            <div className="flex items-center ml-8 border-l border-yellow-500/30 pl-8">              
               <button
                 onClick={onContinueToGame}
-                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-3 rounded-lg transition-all duration-300 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-black px-8 py-2.5 rounded-lg transition-all duration-300 font-bold text-lg shadow-[0_0_15px_rgba(234,179,8,0.3)] hover:shadow-[0_0_20px_rgba(234,179,8,0.5)] transform hover:scale-105"
               >
                 Consulta
                 <svg className="w-5 h-5 inline ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

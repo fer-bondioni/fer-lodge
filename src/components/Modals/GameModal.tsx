@@ -24,7 +24,12 @@ export default function GameModal({
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center">
       <div className="bg-black/90 border border-yellow-500 p-8 rounded-lg max-w-md w-full mx-4 transform transition-all">
-        <p className="text-white text-xl text-center mb-8">{message}</p>
+        <p className="text-white text-xl text-center mb-4">{message}</p>
+        {showCancelButton && (
+          <p className="text-yellow-500/80 text-sm text-center mb-8 italic">
+            Si continúas, las películas incorrectas desaparecerán y las correctas se iluminarán con un marco dorado
+          </p>
+        )}
         <div className="flex flex-col gap-4">
           <button
             onClick={onConfirm}

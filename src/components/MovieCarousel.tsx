@@ -94,7 +94,7 @@ export default function MovieCarousel({
               : 'transform translate-x-0 opacity-100'
           }`}
         >
-          <div className="relative group flex justify-center items-center min-h-screen pt-20">
+          <div className="relative group flex justify-center items-center min-h-screen pt-32">
             {/* Movie Poster and Info Container */}
             <div className="relative flex gap-8">
               {/* Poster Container */}
